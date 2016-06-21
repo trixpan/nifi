@@ -17,6 +17,7 @@
 
 package org.apache.nifi.processors;
 
+import org.apache.nifi.processors.email.ExtractEmailAttachments;
 import org.apache.nifi.util.TestRunner;
 import org.apache.nifi.util.TestRunners;
 import org.junit.Test;

@@ -17,6 +17,7 @@
 
 package org.apache.nifi.processors;
 
+import org.apache.nifi.processors.email.ExtractEmailHeaders;
 import org.apache.nifi.util.MockFlowFile;
 import org.apache.nifi.util.TestRunner;
 import org.apache.nifi.util.TestRunners;
