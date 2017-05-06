@@ -22,7 +22,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.commons.lang3.StringUtils;
+import com.maxmind.geoip2.record.Traits;
+import org.apache.nifi.util.StringUtils;
 import org.apache.nifi.annotation.behavior.EventDriven;
 import org.apache.nifi.annotation.behavior.InputRequirement;
 import org.apache.nifi.annotation.behavior.InputRequirement.Requirement;
@@ -144,6 +145,21 @@ public class GeoEnrichIP extends AbstractEnrichIP {
         attrs.put(new StringBuilder(ipAttributeName).append(".geo.country").toString(), response.getCountry().getName());
         attrs.put(new StringBuilder(ipAttributeName).append(".geo.country.isocode").toString(), response.getCountry().getIsoCode());
         attrs.put(new StringBuilder(ipAttributeName).append(".geo.postalcode").toString(), response.getPostal().getCode());
+
+        Traits traits = response.getTraits();
+        traits.
+
+        final Integer asn = traits.getAutonomousSystemNumber();
+        if (accuracy != null) {
+            attrs.put(new StringBuilder(ipAttributeName).append(".geo.asn").toString(), String.valueOf(asn));
+        }
+
+        final String asnOrganization = traits.getAutonomousSystemOrganization();
+        if (StringUtils.isEmpty(asnOrganization)) {
+            attrs.put(new StringBuilder(ipAttributeName).append(".geo.asn.organization").toString(), asnOrganization);
+        }
+
+
         flowFile = session.putAllAttributes(flowFile, attrs);
 
         session.transfer(flowFile, REL_FOUND);

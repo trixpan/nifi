@@ -29,6 +29,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import org.apache.nifi.annotation.lifecycle.OnScheduled;
 import org.apache.nifi.annotation.lifecycle.OnStopped;
+import org.apache.nifi.components.AllowableValue;
 import org.apache.nifi.components.PropertyDescriptor;
 import org.apache.nifi.expression.AttributeExpression;
 import org.apache.nifi.processor.AbstractProcessor;
@@ -40,6 +41,13 @@ import org.apache.nifi.processors.maxmind.DatabaseReader;
 import org.apache.nifi.util.StopWatch;
 
 public abstract class AbstractEnrichIP extends AbstractProcessor {
+    // Still not supported: "Anonymous IP", "City", "Country", "Connection-Type", "Domain", "ISP",
+    public static final AllowableValue GeoIP2City = new AllowableValue("City", "City", "The GeoIP2 or GeoLite2 City database");
+    public static final AllowableValue GeoLite2Asn = new AllowableValue("ASN", "ASN", "The GeoIP2 ISP Database or the GeoLite2 ASN database");
+    public static final AllowableValue GeoIP2AnonymousIP = new AllowableValue("AnonymousIP", "GeoIP2 Anonymous IP", "The commercial GeoIP2 Anonymous IP database");
+    public static final AllowableValue GeoIP2Isp = new AllowableValue("GeoIP2 ISP", "GeoIP2 ISP", "The commercial GeoIP2 ISP database");
+
+
 
     public static final PropertyDescriptor GEO_DATABASE_FILE = new PropertyDescriptor.Builder()
             // Name has been left untouched so that we don't cause a breaking change
@@ -49,6 +57,16 @@ public abstract class AbstractEnrichIP extends AbstractProcessor {
             .description("Path to Maxmind IP Enrichment Database File")
             .required(true)
             .addValidator(StandardValidators.FILE_EXISTS_VALIDATOR)
+            .build();
+
+    public static final PropertyDescriptor GEO_DATABASE_TYPE = new PropertyDescriptor.Builder()
+            // Name has been left untouched so that we don't cause a breaking change
+            // but ideally this should be renamed to MaxMind Database File or something similar
+            .name("GEO_DATABASE_TYPE")
+            .displayName("MaxMind Database File Type")
+            .description("Type of the MaxMind Database File being used")
+            .required(true)
+            .allowableValues("GeoLite2Country", "GeoLite2ASN")
             .build();
 
     public static final PropertyDescriptor IP_ADDRESS_ATTRIBUTE = new PropertyDescriptor.Builder()
